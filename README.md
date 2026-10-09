@@ -27,7 +27,7 @@ Try it on the [example pull request](https://github.com/jbrownbridge/inkdiff/pul
 
 ## Install
 
-- From the Chrome Web Store: link coming soon.
+- From the [Chrome Web Store](https://chromewebstore.google.com/detail/cmjbgeibpmoeghdkagfkmoicniipfehi).
 - From source: see [Development](#development), then load `dist/` at `chrome://extensions` with **Load unpacked** (Developer mode on).
 
 ## Settings
