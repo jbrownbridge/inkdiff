@@ -23,9 +23,13 @@ Inkdiff is a Chrome extension for the "Files changed" page of a GitHub pull requ
 - **Fast.** No flash of the source diff on load. Sources are fetched in idle time and cached per commit.
 - **Logged out.** Works read-only on public pull requests.
 
-| Comment on a line | Diagrams in a Markdown file | Mermaid files |
-|---|---|---|
-| [![The comment form open under a line](docs/images/comment.png)](docs/images/comment.png) | [![A rendered Mermaid flowchart with its changed lines tinted](docs/images/diagram.png)](docs/images/diagram.png) | [![A .mmd file rendered as a sequence diagram](docs/images/mermaid-file.png)](docs/images/mermaid-file.png) |
+<p>
+  <a href="docs/images/comment.png"><img src="docs/images/comment.png" width="32%" alt="The comment form open under a line"></a>
+  <a href="docs/images/diagram.png"><img src="docs/images/diagram.png" width="32%" alt="A rendered Mermaid flowchart with its changed lines tinted"></a>
+  <a href="docs/images/mermaid-file.png"><img src="docs/images/mermaid-file.png" width="32%" alt="A .mmd file rendered as a sequence diagram"></a>
+</p>
+
+Left to right: comment on a line, a diagram in a Markdown file, a Mermaid (`.mmd`) file. Click an image to see it at full size.
 
 Try it on the [example pull request](https://github.com/jbrownbridge/inkdiff/pull/5/files).
 
