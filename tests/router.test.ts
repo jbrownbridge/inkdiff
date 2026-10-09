@@ -50,6 +50,26 @@ describe('startRouter', () => {
     }
   });
 
+  it('scans again once the adapter fetched page data the page lacked', async () => {
+    const container = document.createElement('div');
+    document.body.replaceChildren(container);
+    const file = { path: 'a.md', kind: 'markdown', repo: 'o/r', pr: 1, headSha: 'x', container } as MdFile;
+    let loaded = false;
+    const forgetPageData = vi.fn();
+    const adapter = {
+      findMarkdownFiles: () => (loaded ? [file] : []),
+      pageLooksSupported: () => true,
+      loadPageData: vi.fn(async () => { await Promise.resolve(); if (loaded) return false; loaded = true; return true; }),
+      forgetPageData,
+    } as unknown as GitHubAdapter;
+    const c = { attach: vi.fn(), detach: vi.fn() };
+    const stop = startRouter({ doc: document, adapters: [adapter], makeController: () => c });
+    expect(c.attach).not.toHaveBeenCalled();
+    expect(forgetPageData).toHaveBeenCalledTimes(1);
+    await vi.waitFor(() => expect(c.attach).toHaveBeenCalledTimes(1));
+    stop();
+  });
+
   it('replaces the controller when GitHub reuses a container for another PR', async () => {
     const container = document.createElement('div');
     document.body.replaceChildren(container);

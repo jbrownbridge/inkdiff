@@ -105,6 +105,13 @@ export interface GitHubAdapter {
   threadsReadable?(file: MdFile): boolean;
   /** GitHub's own element for a posted thread, ready to move into the rendered view. Absent where unsupported. */
   hostThread?(file: MdFile, threadId: string): HostedBox | null;
+  /**
+   * Fetch the PR's page data when the page kept another page's (after a soft navigation); true when
+   * new data arrived and the page should be scanned again. Absent where unsupported.
+   */
+  loadPageData?(doc: Document, url: URL): Promise<boolean>;
+  /** Drop page data fetched for an earlier page (on navigation). */
+  forgetPageData?(doc: Document): void;
   /** Every Markdown file the PR changes (still present at head), for prefetching; [] when unknown. */
   markdownRefs?(doc: Document, url: URL): { repo: string; sha: string; path: string }[];
   /** The signed-in viewer's login, or null. */

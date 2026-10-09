@@ -28,7 +28,7 @@ flowchart TB
   CS -- "private files,<br>kill switch" --> GHCOM
 ```
 
-- **Requests:** file sources come from `raw.githubusercontent.com` without cookies. Only for private repos does Inkdiff use github.com's Raw link with your session. The kill switch is read from github.com once a day, without cookies.
+- **Requests:** file sources come from `raw.githubusercontent.com` without cookies. Only for private repos does Inkdiff use github.com's Raw link with your session. When GitHub opens a pull request without reloading the page, Inkdiff reads the pull request's data from github.com's own JSON routes with your session, as GitHub's page does; the repository name is checked first. The kill switch is read from github.com once a day, without cookies.
 - **content.js** reads the page, renders files and hosts GitHub's comment form. It runs in Chrome's isolated world. Page scripts cannot read its variables or call its functions.
 - **page.js** runs in the page's own world. It does one thing: GitHub's React code may try to remove a comment form or thread that Inkdiff has moved into its view. page.js stops that, but only for elements Inkdiff marked. It also sets one CSS class that hides Markdown source diffs until Inkdiff takes over.
 - **background.js** has one job: it lets content.js use `chrome.storage.session`.

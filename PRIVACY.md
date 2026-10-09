@@ -8,7 +8,7 @@ Inkdiff is a browser extension that shows Markdown files in pull requests as ren
 
 ## What Inkdiff reads, in your browser only
 
-- **The pull request page** you open on github.com: which Markdown files changed, their changed lines, and their review threads (comment text, author logins and avatars), so it can show them in the rendered view.
+- **The pull request page** you open on github.com: which Markdown files changed, their changed lines, and their review threads (comment text, author logins and avatars), so it can show them in the rendered view. When GitHub opens a pull request without reloading the page (for example, from the pull request list), the page does not carry this data yet: Inkdiff then reads it from github.com with your session, the same request GitHub's own page makes to show the pull request.
 - **The source of those files** at the pull request's head commit. For a public repository, Inkdiff asks GitHub's raw-file host (`raw.githubusercontent.com`) directly, without cookies. If that fails (for example, a private repository), it uses github.com's "Raw" link with your github.com session, the same request your browser makes when you click "View file" → "Raw".
 - **Images referenced in the Markdown**, which your browser loads from GitHub's hosts (`*.githubusercontent.com`), as GitHub's own rendered view does. Images from other sites are shown as a link, and Mermaid diagrams that would load a file are not rendered.
 
