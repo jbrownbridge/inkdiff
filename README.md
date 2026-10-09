@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/images/demo.gif" width="880" alt="Demo: GitHub's source diff takes line comments but is hard to read; its rendered view is easy to read but takes no line comments. With Inkdiff, the rendered view takes comments on any line, keeps review threads under their line, and renders diagrams."></p>
+
 <p align="center"><img src="assets/icon.svg" width="96" alt=""></p>
 
 # Inkdiff
@@ -21,6 +23,8 @@ Inkdiff is a Chrome extension for the "Files changed" page of a GitHub pull requ
 - **Fast.** No flash of the source diff on load. Sources are fetched in idle time and cached per commit.
 - **Logged out.** Works read-only on public pull requests.
 
+Try it on the [example pull request](https://github.com/jbrownbridge/inkdiff/pull/5/files).
+
 ## Install
 
 - From the Chrome Web Store: link coming soon.
@@ -37,7 +41,7 @@ Open the extension's options:
 ## Privacy and permissions
 
 - `https://github.com/*`: to read the pull request page and each file's source at the pull request's head commit.
-- `storage`: to keep your three settings.
+- `storage`: to keep your three settings, and to cache file sources until the browser closes.
 
 Inkdiff talks only to GitHub's own servers (github.com and `*.githubusercontent.com`, where GitHub serves raw files and images). Everything it reads stays in your browser. See [PRIVACY.md](PRIVACY.md).
 
