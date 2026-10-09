@@ -101,6 +101,32 @@ describe('FileController', () => {
     expect(on.container.classList.contains('mdr-src')).toBe(true);
   });
 
+  it('opens again when GitHub collapses the file and expands it', async () => {
+    let onChange = () => {};
+    let body = document.createElement('div');
+    const { controller, container } = setup(
+      { diffBody: () => (body.isConnected ? body : null), observe: (_f, cb) => { onChange = cb; return () => {}; } },
+      { settings: { ...DEFAULT_SETTINGS, showOnlyChanged: false, renderedByDefault: true } },
+    );
+    const wrap = document.createElement('div');
+    container.querySelector('div')!.replaceWith(wrap);
+    wrap.append(body);
+    controller.attach();
+    await vi.waitFor(() => expect(container.querySelector('.mdr-panel .mdr-body')).not.toBeNull());
+    // Collapse: GitHub removes the body's wrapper, and the rendered view in it.
+    wrap.remove();
+    onChange();
+    expect(controller.isOpen()).toBe(false);
+    // Expand: GitHub draws a new body.
+    body = document.createElement('div');
+    const again = document.createElement('div');
+    again.append(body);
+    container.append(again);
+    await vi.waitFor(() => expect(again.querySelector('.mdr-panel .mdr-body')).not.toBeNull());
+    expect(body.classList.contains('mdr-hidden')).toBe(true);
+    expect(container.querySelectorAll('.mdr-panel')).toHaveLength(1);
+  });
+
   it('hides the source diff while the rendered view loads', async () => {
     let release!: (s: string) => void;
     const { controller, body } = setup({}, { fetchSource: () => new Promise((r) => { release = r; }) });
