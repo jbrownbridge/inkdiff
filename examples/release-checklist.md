@@ -5,8 +5,9 @@ This file is an example for trying Inkdiff. Open the pull request that changes i
 ## Before the release
 
 1. Update the version in `package.json`.
-2. Run the tests.
+2. Run the tests and the linter.
 3. Write the release notes.
+4. Ask a second maintainer to review the notes.
 
 ## Build
 
@@ -23,6 +24,7 @@ npm run build
 |---|---|---|
 | Build | CI | 5 min |
 | Test | CI | 10 min |
+| Security scan | CI | 4 min |
 | Publish | Maintainer | 2 min |
 
 ## Flow
@@ -30,13 +32,17 @@ npm run build
 ```mermaid
 flowchart LR
   A[Build] --> B[Test]
-  B --> C[Publish]
+  B --> S[Security scan]
+  S -->|pass| C[Publish]
+  S -->|fail| F[Fix and rebuild]
+  F --> A
 ```
 
 ## After the release
 
 - Announce the release.
 - Close the milestone.
+- Check the error reports for one day.
 
 ## Notes
 
