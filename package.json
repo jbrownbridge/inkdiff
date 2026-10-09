@@ -1,0 +1,54 @@
+{
+  "name": "inkdiff",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "vite build -c vite.content.config.ts && vite build -c vite.page.config.ts && vite build -c vite.background.config.ts && vite build -c vite.options.config.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "package": "npm run build && tsx scripts/licenses.ts && tsx scripts/package.ts",
+    "fixtures:capture": "tsx scripts/capture-fixtures.ts",
+    "check:extension": "npm run build && tsx scripts/check-extension.ts",
+    "login": "tsx scripts/login.ts",
+    "smoke": "tsx scripts/smoke.ts",
+    "icons": "tsx scripts/icons.ts",
+    "fixtures:classic": "tsx scripts/capture-classic.ts"
+  },
+  "dependencies": {
+    "dompurify": "3.4.16",
+    "mdast-util-to-hast": "^13.2.1",
+    "mermaid": "12.1.0",
+    "rehype-stringify": "^10.0.1",
+    "remark-frontmatter": "^5.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
+    "unified": "^11.0.5",
+    "unist-util-visit": "^5.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
+    "@types/chrome": "^0.3.4",
+    "@types/hast": "^3.0.5",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^26.6.4",
+    "eslint": "^10.12.0",
+    "jsdom": "^30.1.2",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.1",
+    "vite": "^8.3.3",
+    "vitest": "^5.0.3"
+  },
+  "overrides": {
+    "lodash-es": "4.18.1",
+    "katex": "0.18.11"
+  }
+}

@@ -1,0 +1,70 @@
+# Lint, typecheck, test and package every pull request and every push to main.
+name: ci
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run package
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: inkdiff-extension
+          path: inkdiff-*.zip
+          retention-days: 14
+
+  # New dependencies in a pull request: no known high-severity vulnerabilities, permissive licenses only.
+  # Dependency review is free on public repositories only; skip while the repository is private.
+  dependency-review:
+    if: github.event_name == 'pull_request' && !github.event.repository.private
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/dependency-review-action@a1d282b36b6f3519aa1f3fc636f609c47dddb294 # v5.0.0
+        with:
+          fail-on-severity: high
+          # Permissive licenses, plus EPL-2.0 for elkjs (bundled by Mermaid; its source pointer is in NOTICE).
+          allow-licenses: MIT, ISC, BSD-2-Clause, BSD-3-Clause, Apache-2.0, 0BSD, Unlicense, CC0-1.0, BlueOak-1.0.0, Python-2.0, CC-BY-4.0, MPL-2.0, EPL-2.0
+
+  # Every commit in a pull request carries a Developer Certificate of Origin sign-off (CONTRIBUTING.md).
+  # Dependabot cannot sign off; merge commits from "Update branch" carry no sign-off either.
+  dco:
+    if: github.event_name == 'pull_request' && github.event.pull_request.user.login != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - name: Check Signed-off-by on every commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+          REPO: ${{ github.repository }}
+        run: |
+          missing=$(gh api "repos/$REPO/pulls/$PR/commits" --paginate \
+            --jq '.[] | select(.parents | length == 1) | select(.commit.message | test("(?m)^Signed-off-by: .+ <.+>$") | not) | .sha[0:7] + " " + (.commit.message | split("\n")[0])')
+          if [ -n "$missing" ]; then
+            echo "These commits have no 'Signed-off-by:' line (use git commit -s):"
+            echo "$missing"
+            exit 1
+          fi

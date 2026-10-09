@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.auth/
+.playwright-mcp/
+playwright-report/
+test-results/
+artifacts/
+*.zip
+.vitest/
+tests/fixtures/github/
+tests/fixtures/github-classic/
+
+*.tmp.ts

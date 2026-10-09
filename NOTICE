@@ -1,0 +1,11 @@
+Inkdiff
+Copyright 2026 Jason Brownbridge
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Each release package bundles third-party open-source software. Their licenses
+and notices are in THIRD_PARTY_LICENSES.txt inside the package.
+
+The package includes elkjs 0.9.3 (part of the bundled Mermaid library),
+licensed under the Eclipse Public License 2.0. Its source code is available at
+https://github.com/kieler/elkjs and https://www.npmjs.com/package/elkjs/v/0.9.3
