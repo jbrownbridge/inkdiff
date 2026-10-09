@@ -1,0 +1,9 @@
+sequenceDiagram
+  participant M as Maintainer
+  participant CI
+  participant S as Store
+  M->>CI: Push the release tag
+  CI->>CI: Build and test
+  CI-->>M: Release zip
+  M->>S: Upload the zip
+  S-->>M: Review result
