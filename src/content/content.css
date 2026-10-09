@@ -1,0 +1,290 @@
+.mdr-hidden { display: none !important; }
+
+/* Early hide (src/page/early.ts): Markdown source diffs that will open rendered never paint. */
+html.mdr-pre [role="region"][id^="diff-"]:not(.mdr-src) table[data-diff-anchor]:is([aria-label$=".md" i], [aria-label$=".mdx" i], [aria-label$=".markdown" i], [aria-label$=".mmd" i]) { display: none; }
+/* Selector observer: an animationstart tells the router the moment GitHub draws a file or diff. */
+@keyframes mdr-seen { from { outline-offset: 0; } to { outline-offset: 0; } }
+[role="region"][id^="diff-"], table[data-diff-anchor] { animation-name: mdr-seen; animation-duration: 1ms; }
+
+.mdr-panel {
+  position: relative;
+  padding: 16px 24px 16px 0;
+  border-top: 1px solid var(--borderColor-default, #d1d9e0);
+  background: var(--bgColor-default, #ffffff);
+}
+.mdr-body .mdr-changed { position: relative; }
+
+.mdr-wrap { display: grid; grid-template-columns: 64px minmax(0, 1fr); column-gap: 16px; }
+/* Security: nothing in the rendered view paints outside it (no covering GitHub's page). */
+.mdr-wrap { contain: paint; }
+.mdr-gutter { position: relative; user-select: none; -webkit-user-select: none; }
+.mdr-gutter-cell {
+  position: absolute; left: 0; right: 0; box-sizing: border-box; padding: 0 10px 0 0;
+  text-align: right; pointer-events: auto; cursor: pointer; /* click or drag: comment on these lines */
+  font: 400 12px/20px var(--fontStack-monospace, ui-monospace, SFMono-Regular, monospace);
+  color: var(--diffBlob-hunkNum-fgColor-rest, var(--fgColor-muted, #59636e));
+}
+.mdr-gutter-cell::before { content: attr(data-label); }
+.mdr-gutter-add { background: var(--diffBlob-additionNum-bgColor, #aceebb); color: var(--diffBlob-additionNum-fgColor, var(--fgColor-default, #1f2328)); }
+.mdr-gutter-hover { box-shadow: inset -3px 0 0 var(--bgColor-accent-emphasis, #0969da); color: var(--fgColor-default, #1f2328); }
+.mdr-gutter-selected { background: var(--bgColor-attention-muted, #fff8c5); }
+/* One block per code line so a changed line's tint spans the line, and its gutter cell the line box. */
+.mdr-body pre > code { display: block; width: max-content; min-width: 100%; }
+.mdr-body pre [data-src-line] { display: block; }
+/* Changed content gets GitHub's added-row tint: leaf blocks, and code per line (not the whole pre). */
+.mdr-body .mdr-changed:where(:not(pre, .md-mermaid, :has([data-src-start]))),
+.mdr-body pre .mdr-line-changed { background: var(--diffBlob-addition-bgColor-line, var(--bgColor-success-muted, #dafbe1)); }
+
+.mdr-add, .mdr-select {
+  position: absolute;
+  z-index: 2;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  background: var(--bgColor-accent-emphasis, #0969da);
+  color: var(--fgColor-onEmphasis, #ffffff);
+  font: 600 13px/22px var(--fontStack-sansSerif, system-ui, sans-serif);
+}
+/* Just right of the number column, in the 16px column gap (like GitHub): numbers stay readable. */
+.mdr-add { left: calc(64px - 4px); width: 24px; height: 24px; padding: 0; font-size: 16px; line-height: 24px; }
+.mdr-add:hover { transform: scale(1.15); }
+.mdr-select { right: 24px; padding: 0 10px; }
+
+.mdr-removed {
+  display: block;
+  margin: 4px 0 12px;
+  padding: 2px 8px;
+  border: 1px dashed var(--borderColor-danger-muted, #ff818266);
+  border-radius: 6px;
+  background: var(--bgColor-danger-muted, #ffebe9);
+  color: var(--fgColor-danger, #d1242f);
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+}
+.mdr-removed { margin-left: -80px; width: calc(100% + 80px); border-style: solid; border-width: 0 0 0 3px; border-color: var(--diffBlob-deletionNum-bgColor, #ffcecb); }
+
+/* A review thread, drawn like GitHub's inline thread card. */
+.mdr-thread {
+  margin: 8px 0 16px;
+  border: 1px solid var(--borderColor-default, #d1d9e0);
+  border-radius: 6px;
+  background: var(--bgColor-default, #ffffff);
+  box-shadow: var(--shadow-resting-small, 0 1px 1px 0 #1f23280a);
+  font-size: 14px;
+  overflow: hidden;
+}
+.mdr-thread > summary.mdr-thread-head {
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+  list-style: none; cursor: pointer;
+  color: var(--fgColor-muted, #59636e); font-size: 12px; font-weight: 400;
+}
+.mdr-thread > summary.mdr-thread-head::-webkit-details-marker { display: none; }
+.mdr-thread > summary.mdr-thread-head::before { content: '▸'; font-size: 10px; }
+.mdr-thread[open] > summary.mdr-thread-head::before { content: '▾'; }
+.mdr-thread[open] > summary.mdr-thread-head { border-bottom: 1px solid var(--borderColor-muted, #d1d9e0b3); }
+.mdr-label {
+  display: inline-block; padding: 0 7px; border: 1px solid var(--borderColor-default, #d1d9e0); border-radius: 999px;
+  color: var(--fgColor-muted, #59636e); font-size: 12px; font-weight: 500; line-height: 18px;
+}
+.mdr-label-pending { border-color: var(--borderColor-attention-emphasis, #9a6700); color: var(--fgColor-attention, #9a6700); }
+.mdr-comments { padding: 0 12px; }
+.mdr-thread .mdr-comment { margin: 0; padding: 12px 0; }
+.mdr-thread .mdr-comment + .mdr-comment { border-top: 1px solid var(--borderColor-muted, #d1d9e0b3); }
+.mdr-comment-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 14px; }
+.mdr-avatar { width: 20px; height: 20px; border-radius: 50%; }
+.mdr-author { color: var(--fgColor-default, #1f2328); }
+.mdr-time { color: var(--fgColor-muted, #59636e); font-size: 12px; }
+.mdr-thread .mdr-comment-body { padding-left: 28px; font-size: 14px; }
+.mdr-thread .mdr-comment-body > :last-child { margin-bottom: 0; }
+.mdr-thread-foot { padding: 8px 12px 12px; border-top: 1px solid var(--borderColor-muted, #d1d9e0b3); background: var(--bgColor-muted, #f6f8fa); }
+.mdr-thread-foot > .mdr-actions { justify-content: flex-end; margin: 0; }
+.mdr-tools, .mdr-actions { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; }
+.mdr-actions { justify-content: flex-end; }
+.mdr-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  border: 1px solid var(--borderColor-default, #d1d9e0);
+  border-radius: 6px;
+  background: var(--bgColor-default, #ffffff);
+  color: var(--fgColor-default, #1f2328);
+  font: 13px/1.5 var(--fontStack-monospace, ui-monospace, monospace);
+}
+/* Zero-specificity base so every class-specific button rule below wins; the form's own controls and GitHub's hosted form are excluded. */
+.mdr-panel :where(button:not(.mdr-add, .mdr-select, .mdr-removed, .mdr-cf-tool, .mdr-cf-tab, .mdr-provider, .mdr-native-host button)) {
+  padding: 4px 12px;
+  border: 1px solid var(--borderColor-default, #d1d9e0);
+  border-radius: 6px;
+  background: var(--bgColor-default, #ffffff);
+  color: var(--fgColor-default, #1f2328);
+  font-size: 13px;
+  cursor: pointer;
+}
+.mdr-panel button.mdr-primary {
+  background: var(--bgColor-success-emphasis, #1f883d);
+  border-color: transparent;
+  color: var(--fgColor-onEmphasis, #ffffff);
+}
+.mdr-panel button.mdr-link { border-color: transparent; background: none; color: var(--fgColor-accent, #0969da); }
+.mdr-panel button:focus-visible { outline: 2px solid var(--focus-outlineColor, #0969da); outline-offset: 1px; }
+.mdr-panel button:disabled { opacity: 0.6; cursor: default; }
+.mdr-error { color: var(--fgColor-danger, #d1242f); margin: 6px 0; }
+.mdr-note { color: var(--fgColor-muted, #59636e); margin: 6px 0; font-size: 12px; }
+.mdr-banner {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--bgColor-attention-muted, #fff8c5);
+  color: var(--fgColor-default, #1f2328);
+}
+.mdr-mermaid-svg { margin-top: 8px; overflow-x: auto; }
+.md-mermaid.mdr-mermaid-rendered > pre { display: none; }
+.md-mermaid.mdr-mermaid-rendered.mdr-mermaid-show-source > pre { display: block; }
+.mdr-panel .mdr-mermaid-source { font-size: 12px; }
+.mdr-load-error { display: flex; gap: 12px; align-items: center; }
+.mdr-body .mdr-collapsed { display: none !important; }
+.mdr-hunk {
+  display: flex; align-items: center; gap: 8px; margin: 8px 0 8px -80px; padding: 2px 8px;
+  background: var(--diffBlob-hunkLine-bgColor, var(--bgColor-accent-muted, #ddf4ff));
+  color: var(--fgColor-muted, #59636e);
+  font: 12px/20px var(--fontStack-monospace, ui-monospace, SFMono-Regular, monospace);
+}
+.mdr-body li.mdr-hunk { list-style: none; }
+.mdr-body tr.mdr-hunk { display: table-row; margin: 0; padding: 0; background: none; }
+.mdr-body tr.mdr-hunk > td.mdr-hunk-cell {
+  padding: 2px 8px; border: 0;
+  background: var(--diffBlob-hunkLine-bgColor, var(--bgColor-accent-muted, #ddf4ff));
+  color: var(--fgColor-muted, #59636e);
+  font: 12px/20px var(--fontStack-monospace, ui-monospace, SFMono-Regular, monospace);
+}
+.mdr-panel button.mdr-expand { padding: 0 6px; border: 0; background: none; color: var(--fgColor-muted, #59636e); }
+.mdr-panel button.mdr-expand:hover { background: var(--bgColor-accent-emphasis, #0969da); color: var(--fgColor-onEmphasis, #ffffff); }
+.mdr-toolbar { display: flex; justify-content: flex-end; margin-bottom: 8px; }
+.mdr-readonly { margin-right: auto; align-self: center; font-size: 12px; color: var(--fgColor-muted, #59636e); }
+@media (prefers-reduced-motion: reduce) { .mdr-panel * { transition: none !important; } }
+
+.mdr-comment-form {
+  margin: 8px 0 16px;
+  border: 1px solid var(--borderColor-default, #d1d9e0);
+  border-radius: 6px;
+  background: var(--bgColor-default, #ffffff);
+  color: var(--fgColor-default, #1f2328);
+  font: 14px/1.5 var(--fontStack-sansSerif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+.mdr-cf-header { display: flex; align-items: center; gap: 8px; padding: 8px 12px; font-weight: 600; font-size: 14px; }
+.mdr-cf-avatar { width: 24px; height: 24px; border-radius: 50%; flex: none; }
+
+/* Tab bar + editor share one bordered box; the active tab joins the white body. */
+.mdr-cf-box { margin: 0 8px; border: 1px solid var(--borderColor-default, #d1d9e0); border-radius: 6px; }
+.mdr-cf-tabnav {
+  display: flex; align-items: flex-end; gap: 0; padding: 8px 8px 0;
+  border-bottom: 1px solid var(--borderColor-default, #d1d9e0);
+  border-radius: 6px 6px 0 0;
+  background: var(--bgColor-muted, #f6f8fa);
+}
+.mdr-panel button.mdr-cf-tab {
+  margin: 0 0 -1px; padding: 6px 16px;
+  border: 1px solid transparent; border-bottom: 0; border-radius: 6px 6px 0 0;
+  background: transparent; color: var(--fgColor-muted, #59636e);
+  font: inherit; font-size: 14px; line-height: 20px; cursor: pointer;
+}
+.mdr-panel button.mdr-cf-tab:hover { color: var(--fgColor-default, #1f2328); }
+.mdr-panel button.mdr-cf-tab[aria-selected="true"] {
+  border-color: var(--borderColor-default, #d1d9e0);
+  background: var(--bgColor-default, #ffffff);
+  color: var(--fgColor-default, #1f2328);
+}
+.mdr-cf-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 4px; margin-left: auto; padding: 0 0 4px; }
+.mdr-cf-group { display: flex; align-items: center; gap: 0; }
+.mdr-cf-divider { width: 1px; height: 18px; margin: 0 4px; background: var(--borderColor-default, #d1d9e0); }
+.mdr-panel button.mdr-cf-tool, .mdr-panel button.mdr-provider {
+  display: inline-flex; align-items: center; justify-content: center;
+  height: 28px; margin: 0; border: 0; border-radius: 6px;
+  background: transparent; color: var(--fgColor-muted, #59636e); cursor: pointer;
+}
+.mdr-panel button.mdr-cf-tool { width: 28px; padding: 0; }
+.mdr-panel button.mdr-provider { padding: 0 6px; font: inherit; font-size: 12px; }
+.mdr-panel button.mdr-cf-tool:hover, .mdr-panel button.mdr-provider:hover { background: var(--bgColor-neutral-muted, #818b981f); color: var(--fgColor-default, #1f2328); }
+
+.mdr-cf-body { padding: 8px; border-radius: 0 0 6px 6px; background: var(--bgColor-default, #ffffff); }
+.mdr-comment-form .mdr-textarea, .mdr-cf-preview {
+  display: block; width: 100%; min-height: 100px; margin: 0; box-sizing: border-box; padding: 8px;
+  font: 14px/1.5 var(--fontStack-sansSerif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif);
+}
+.mdr-comment-form .mdr-textarea { resize: vertical; }
+.mdr-comment-form .mdr-textarea:focus {
+  outline: none;
+  border-color: var(--borderColor-accent-emphasis, #0969da);
+  box-shadow: inset 0 0 0 1px var(--borderColor-accent-emphasis, #0969da);
+}
+
+/* Footer: note on the left, buttons on the right. */
+.mdr-comment-form .mdr-actions { align-items: center; justify-content: flex-end; margin: 0; padding: 8px 12px; }
+.mdr-comment-form .mdr-actions .mdr-note { margin: 0 auto 0 0; flex: 1 1 200px; font-size: 12px; }
+.mdr-comment-form button.mdr-cancel, .mdr-comment-form button.mdr-copy, .mdr-comment-form button.mdr-primary, .mdr-comment-form button.mdr-secondary {
+  height: 32px; padding: 0 12px; border-radius: 6px; font: inherit; font-size: 14px; font-weight: 500; line-height: 30px;
+}
+.mdr-panel .mdr-comment-form button.mdr-primary {
+  border: 1px solid var(--button-primary-borderColor-rest, transparent);
+  background: var(--button-primary-bgColor-rest, #1f883d);
+  color: var(--button-primary-fgColor-rest, #ffffff);
+}
+.mdr-panel .mdr-comment-form button.mdr-primary:hover:not(:disabled) { background: var(--button-primary-bgColor-hover, #1c8139); }
+.mdr-cf-toolbar[hidden], .mdr-comment-form [hidden] { display: none !important; }
+/* GitHub's own comment form hosted in the rendered view: placement only, its box keeps GitHub's styles. */
+.mdr-native-host, .mdr-gh-thread { margin: 8px 0 16px; font-size: 14px; line-height: 1.5; }
+/*
+ * GitHub's hosted boxes sit inside .markdown-body: undo its typography so they look as in the diff.
+ * A comment's own .markdown-body inside them keeps GitHub's styles.
+ */
+.mdr-body :is(.mdr-native-host, .mdr-gh-thread) :is(h1, h2, h3, h4, h5, h6):not(:is(.mdr-native-host, .mdr-gh-thread) .markdown-body *) {
+  margin: 0; padding-top: 4px; padding-bottom: 8px; border: 0;
+  font-size: 14px; font-weight: 400; line-height: 1.5;
+}
+.mdr-body :is(.mdr-native-host, .mdr-gh-thread) :is(p, ul, ol, dl, blockquote, pre, table, textarea, details):not(:is(.mdr-native-host, .mdr-gh-thread) .markdown-body *) { margin-top: 0; margin-bottom: 0; }
+.mdr-body :is(.mdr-native-host, .mdr-gh-thread) :is(ul, ol):not(:is(.mdr-native-host, .mdr-gh-thread) .markdown-body *) { padding-left: 0; }
+.mdr-body :is(.mdr-native-host, .mdr-gh-thread) li + li { margin-top: 0; }
+.mdr-body :is(.mdr-native-host, .mdr-gh-thread) img { margin: 0; background-color: transparent; }
+/* GitHub's thread box carries diff-cell margins; in the rendered view it is a plain block. */
+.mdr-gh-thread > [data-marker-id] { margin: 0 !important; }
+.mdr-panel .mdr-to-rendered { display: none; }
+.mdr-thread .mdr-plain { white-space: pre-wrap; }
+.mdr-thread-posting { opacity: 0.75; }
+.mdr-thread-posting > .mdr-thread-head { border-bottom: 1px solid var(--borderColor-muted, #d1d9e0b3); }
+.mdr-label-posting { border-color: var(--borderColor-accent-emphasis, #0969da); color: var(--fgColor-accent, #0969da); }
+.mdr-native-tools { display: flex; justify-content: flex-end; gap: 4px; margin: 8px 0 -4px; }
+/* The comment highlight wins over the added-row tint, also on tinted code lines inside it. */
+.mdr-body .mdr-selected, .mdr-body .mdr-selected .mdr-line-changed { background: var(--bgColor-attention-muted, #fff8c5); }
+
+/* On GitHub's own thread in the source diff: back to this thread in the rendered view. */
+.mdr-to-rendered {
+  margin: 0 8px 8px auto; display: block; padding: 2px 10px;
+  border: 1px solid var(--borderColor-default, #d1d9e0); border-radius: 6px;
+  background: var(--bgColor-default, #ffffff); color: var(--fgColor-accent, #0969da);
+  font: 500 12px/20px var(--fontStack-sansSerif, system-ui, sans-serif); cursor: pointer;
+}
+.mdr-to-rendered:hover { background: var(--bgColor-accent-muted, #ddf4ff); }
+@keyframes mdr-flash { from { box-shadow: 0 0 0 3px var(--bgColor-accent-emphasis, #0969da); } to { box-shadow: 0 0 0 0 transparent; } }
+.mdr-thread.mdr-flash { animation: mdr-flash 1.6s ease-out; }
+.mdr-body .mdr-gh-thread a:not(.markdown-body a) { text-decoration: none; }
+
+/* Security: a diagram paints only inside its own box (fixed positioning included), and GitHub's
+   hosted comment form and threads paint above any author content around them. */
+.mdr-mermaid-svg { contain: paint; position: relative; }
+.mdr-body :is(.mdr-native-host, .mdr-gh-thread) { position: relative; z-index: 3; isolation: isolate; }
+
+/* Changes the rendered view would hide: HTML comment text (only where the diff changed it, or in a
+   new file), changed lines outside every block, and a warning for bidirectional text. */
+.mdr-body .mdr-unseen { display: none; }
+.mdr-body :is(.mdr-changed, .mdr-changed *) > .mdr-unseen,
+.mdr-body.mdr-all-changed .mdr-unseen {
+  display: block; margin: 4px 0; padding: 4px 8px; border: 1px dashed var(--borderColor-attention-emphasis, #9a6700);
+  border-radius: 6px; background: var(--bgColor-attention-muted, #fff8c5); color: var(--fgColor-default, #1f2328);
+  font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap;
+}
+.mdr-body .mdr-unseen::before { content: 'Hidden comment: '; font-weight: 600; }
+.mdr-unseen-lines { margin: 8px 0; padding: 6px 10px; border: 1px dashed var(--borderColor-attention-emphasis, #9a6700); border-radius: 6px; background: var(--bgColor-attention-muted, #fff8c5); }
+.mdr-unseen-lines .mdr-unseen-label { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+.mdr-unseen-lines pre { margin: 0; padding: 0; background: none; font-size: 12px; white-space: pre-wrap; }
+.mdr-bidi { margin: 0 0 8px; padding: 8px 12px; border: 1px solid var(--borderColor-attention-emphasis, #9a6700); border-radius: 6px; background: var(--bgColor-attention-muted, #fff8c5); font-size: 13px; }

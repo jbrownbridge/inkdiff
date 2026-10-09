@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Inkdiff settings</title>
+    <style>
+      body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; max-width: 36rem; margin: 2rem auto; padding: 0 1rem; color: #1f2328; }
+      label { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.75rem 0; }
+      #status { color: #1a7f37; min-height: 1.5em; }
+      @media (prefers-color-scheme: dark) { body { background: #0d1117; color: #e6edf3; } #status { color: #3fb950; } }
+    </style>
+  </head>
+  <body>
+    <h1>Inkdiff settings</h1>
+    <label><input type="checkbox" id="renderedByDefault"> Open Markdown files rendered by default</label>
+    <label><input type="checkbox" id="showOnlyChanged"> Show only changed sections</label>
+    <label><input type="checkbox" id="autoRenderMermaid"> Render Mermaid diagrams automatically</label>
+    <p id="status" role="status"></p>
+    <script type="module" src="./options.ts"></script>
+  </body>
+</html>

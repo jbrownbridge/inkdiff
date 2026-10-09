@@ -1,0 +1,27 @@
+name: Bug report
+description: Something does not work or looks wrong.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: A public pull request URL that shows the problem, if you can share one. Do not post links to private repositories.
+  - type: textarea
+    id: console
+    attributes:
+      label: Console lines starting with [Inkdiff]
+      render: text
+  - type: input
+    id: versions
+    attributes:
+      label: Inkdiff and Chrome versions
+      placeholder: Inkdiff 1.0.0, Chrome 140
+    validations:
+      required: true
