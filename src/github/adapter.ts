@@ -22,6 +22,8 @@ export function createGitHubAdapter(): GitHubAdapter {
     hostThread,
     viewerLogin: read.viewerLogin,
     markdownRefs: read.markdownRefs,
+    loadPageData: read.loadPageData,
+    forgetPageData: read.forgetPageData,
     revealSourceLine: navigate.revealSourceLine,
     openNativeForm,
     observe: (file, onChange) => observeContainer(file.container, onChange),

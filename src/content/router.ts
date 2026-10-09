@@ -51,6 +51,7 @@ export function startRouter(deps: RouterDeps): () => void {
     const page = parseFilesPage(url);
     if (url.href !== lastUrl) {
       lastUrl = url.href;
+      for (const a of adapters) a.forgetPageData?.(doc);
       clearTimeout(healthTimer);
       if (page) {
         healthTimer = setTimeout(() => {
@@ -65,6 +66,8 @@ export function startRouter(deps: RouterDeps): () => void {
     const index = pick();
     if (index < 0) { detachAll(); releaseUnclaimed(); return; }
     const adapter = adapters[index];
+    // After a soft navigation the page may still hold another page's data: fetch the PR's, then scan again.
+    adapter.loadPageData?.(doc, url).then((fresh) => { if (fresh && !stopped) scanSoon(); }, () => {});
     if (deps.prefetch && adapter.markdownRefs && prefetchedFor !== url.href) {
       const refs = adapter.markdownRefs(doc, url);
       if (refs.length) { prefetchedFor = url.href; deps.prefetch(refs); }
@@ -90,6 +93,7 @@ export function startRouter(deps: RouterDeps): () => void {
   }
   let prefetchedFor = '';
 
+  let stopped = false;
   let timer: ReturnType<typeof setTimeout> | undefined;
   const schedule = () => { clearTimeout(timer); timer = setTimeout(scan, 150); };
   /** Scan on the next frame: GitHub just drew a file (selector observer) or finished a navigation. */
@@ -109,6 +113,7 @@ export function startRouter(deps: RouterDeps): () => void {
   scan();
 
   return () => {
+    stopped = true;
     observer.disconnect();
     clearTimeout(timer);
     clearTimeout(healthTimer);

@@ -3,7 +3,7 @@ import type { Hunk } from '../core/hunks';
 import { summarizeRows, type DiffRow } from './diff-rows';
 import { isSafeRef } from '../core/source-fetch';
 import { inGitHubPlace, isOrphan } from './hosted-homes';
-import { embeddedChangedFiles, embeddedHeadSha, embeddedIsFullComparison, embeddedThreadComments } from './embedded';
+import { embeddedChangedFiles, embeddedHeadSha, embeddedIsFullComparison, embeddedThreadComments, forgetPrPayload, loadPrPayload } from './embedded';
 import { S } from './selectors';
 import { fileKind, type MdFile, type ThreadComment, type ThreadInfo } from './types';
 
@@ -51,6 +51,17 @@ export function findMarkdownFiles(doc: Document, url: URL): MdFile[] {
       const kind = fileKind(f.path);
       return kind && !deleted.has(f.path) ? [{ ...f, kind, ...pr, headSha }] : [];
     });
+}
+
+/** Fetch the PR's data when the page kept another page's payload; true when new data arrived. */
+export function loadPageData(doc: Document, url: URL): Promise<boolean> {
+  const pr = parsePrUrl(url);
+  if (!pr || selectsCommits(url) || readHeadSha(doc, pr.pr)) return Promise.resolve(false);
+  return loadPrPayload(doc, pr.repo, pr.pr);
+}
+
+export function forgetPageData(doc: Document): void {
+  forgetPrPayload(doc);
 }
 
 const DELETED = /^(DELETED|REMOVED)$/i;
