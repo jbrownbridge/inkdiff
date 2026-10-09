@@ -9,7 +9,7 @@ Reads github.com only. No servers. No tracking.
 
 Review **rendered** Markdown in pull requests, and comment on the exact source lines.
 
-![Inkdiff shows a changed Markdown file rendered, with changed lines tinted, a line-number gutter, and a review comment under its line](docs/images/rendered.png)
+![Demo: a Markdown change on a pull request shows first as GitHub's raw diff, then rendered by Inkdiff with changed lines tinted; a click on a line opens the comment form, and a Mermaid diagram renders in place](docs/images/demo.gif)
 
 Inkdiff is a Chrome extension for the "Files changed" page of a GitHub pull request. For each Markdown file (`.md`, `.mdx`, `.markdown`) and Mermaid file (`.mmd`), it shows the file as readers see it, with a line-number gutter that maps every block to its exact source lines.
 
@@ -22,14 +22,6 @@ Inkdiff is a Chrome extension for the "Files changed" page of a GitHub pull requ
 - **Diagrams.** Mermaid diagrams render inside the view (on click, or automatically).
 - **Fast.** No flash of the source diff on load. Sources are fetched in idle time and cached per commit.
 - **Logged out.** Works read-only on public pull requests.
-
-<p>
-  <a href="docs/images/comment.png"><img src="docs/images/comment.png" width="32%" alt="The comment form open under a line"></a>
-  <a href="docs/images/diagram.png"><img src="docs/images/diagram.png" width="32%" alt="A rendered Mermaid flowchart with its changed lines tinted"></a>
-  <a href="docs/images/mermaid-file.png"><img src="docs/images/mermaid-file.png" width="32%" alt="A .mmd file rendered as a sequence diagram"></a>
-</p>
-
-Left to right: comment on a line, a diagram in a Markdown file, a Mermaid (`.mmd`) file. Click an image to see it at full size.
 
 Try it on the [example pull request](https://github.com/jbrownbridge/inkdiff/pull/5/files).
 
