@@ -64,7 +64,7 @@ export class FileController {
     this.file.container.addEventListener('click', this.onToggle, true);
     this.decorateMarkers();
     // One watcher per file: it decorates GitHub's threads and, while the panel is open, syncs them.
-    this.stopWatch ??= adapter.observe(this.file, () => { this.decorateMarkers(); this.syncThreads(); });
+    this.stopWatch ??= adapter.observe(this.file, () => { this.recover(); this.decorateMarkers(); this.syncThreads(); });
     const auto = this.isMermaid ? !sourceChosen.has(fileId(this.file)) : settings.renderedByDefault;
     // Not opening by itself: GitHub's source diff shows (the early hide must not keep it hidden).
     this.file.container.classList.toggle(SOURCE_CLASS, !auto);
@@ -73,6 +73,21 @@ export class FileController {
       const stop = visible(this.file.container, () => this.openWhenReady());
       this.stopVisible = () => { stop(); this.stopWaiting?.(); this.stopWaiting = null; };
     }
+  }
+
+  /**
+   * GitHub collapses a file by removing its diff body, and the rendered view with it; expanding
+   * draws a new body. Forget the removed view, and open again once the new body is there.
+   */
+  private recover(): void {
+    if (!this.shown || this.shown.isConnected) return;
+    const reopen = this.panel !== null || this.opening;
+    this.gen++;
+    this.opening = false;
+    this.panel?.destroy();
+    this.panel = null;
+    this.shown = null;
+    if (reopen) this.openWhenReady();
   }
 
   /** Open now, or as soon as GitHub renders the diff body (it may load lazily). */
