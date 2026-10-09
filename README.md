@@ -9,7 +9,7 @@ Reads github.com only. No servers. No tracking.
 
 Review **rendered** Markdown in pull requests, and comment on the exact source lines.
 
-![Demo: a Markdown change on a pull request shows first as GitHub's raw diff, then rendered by Inkdiff with changed lines tinted; a click on a line opens the comment form, and a Mermaid diagram renders in place](docs/images/demo.gif)
+![Demo: GitHub's source diff takes line comments but is hard to read; its rendered view is easy to read but takes no line comments. With Inkdiff, the rendered view takes comments on any line, keeps review threads under their line, and renders diagrams.](docs/images/demo.gif)
 
 Inkdiff is a Chrome extension for the "Files changed" page of a GitHub pull request. For each Markdown file (`.md`, `.mdx`, `.markdown`) and Mermaid file (`.mmd`), it shows the file as readers see it, with a line-number gutter that maps every block to its exact source lines.
 
