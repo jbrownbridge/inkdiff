@@ -9,6 +9,8 @@ Reads github.com only. No servers. No tracking.
 
 Review **rendered** Markdown in pull requests, and comment on the exact source lines.
 
+![Inkdiff shows a changed Markdown file rendered, with changed lines tinted, a line-number gutter, and a review comment under its line](docs/images/rendered.png)
+
 Inkdiff is a Chrome extension for the "Files changed" page of a GitHub pull request. For each Markdown file (`.md`, `.mdx`, `.markdown`) and Mermaid file (`.mmd`), it shows the file as readers see it, with a line-number gutter that maps every block to its exact source lines.
 
 ## Features
@@ -20,6 +22,12 @@ Inkdiff is a Chrome extension for the "Files changed" page of a GitHub pull requ
 - **Diagrams.** Mermaid diagrams render inside the view (on click, or automatically).
 - **Fast.** No flash of the source diff on load. Sources are fetched in idle time and cached per commit.
 - **Logged out.** Works read-only on public pull requests.
+
+| Comment on a line | Diagrams in a Markdown file | Mermaid files |
+|---|---|---|
+| [![The comment form open under a line](docs/images/comment.png)](docs/images/comment.png) | [![A rendered Mermaid flowchart with its changed lines tinted](docs/images/diagram.png)](docs/images/diagram.png) | [![A .mmd file rendered as a sequence diagram](docs/images/mermaid-file.png)](docs/images/mermaid-file.png) |
+
+Try it on the [example pull request](https://github.com/jbrownbridge/inkdiff/pull/5/files).
 
 ## Install
 
@@ -37,7 +45,7 @@ Open the extension's options:
 ## Privacy and permissions
 
 - `https://github.com/*`: to read the pull request page and each file's source at the pull request's head commit.
-- `storage`: to keep your three settings.
+- `storage`: to keep your three settings, and to cache file sources until the browser closes.
 
 Inkdiff talks only to GitHub's own servers (github.com and `*.githubusercontent.com`, where GitHub serves raw files and images). Everything it reads stays in your browser. See [PRIVACY.md](PRIVACY.md).
 
