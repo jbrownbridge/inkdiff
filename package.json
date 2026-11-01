@@ -21,7 +21,7 @@
     "fixtures:classic": "tsx scripts/capture-classic.ts"
   },
   "dependencies": {
-    "dompurify": "3.4.16",
+    "dompurify": "3.4.17",
     "mdast-util-to-hast": "^13.2.1",
     "mermaid": "12.1.0",
     "rehype-stringify": "^10.0.1",
